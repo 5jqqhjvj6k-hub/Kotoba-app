@@ -2,10 +2,174 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ことばカード</title>
+  <title>ことばカード（新）</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 20px; }
+    select, textarea, button { font-size: 1em; margin-top: 10px; width: 100%; }
+    .card { margin-top: 20px; padding: 15px; border-radius: 8px; background: #f5f5f5; }
+    img { max-width: 100%; margin-top: 10px; }
+    .example { margin-top: 5px; }
+  </style>
 </head>
 <body>
-  <h1>ことばカード</h1>
-  <p>このページは準備中です。</p>
+
+<h1>ことばカード（新）</h1>
+
+<select id="wordSelect"></select>
+
+<div class="card" id="card"></div>
+
+<textarea id="inputText" rows="3" placeholder="文を書いてみよう"></textarea>
+<button onclick="checkSentence()">チェック</button>
+<p id="feedback"></p>
+
+<script>
+const words = [
+  {
+    id:"hizume",
+    word:"ひづめ",
+    reading:"ひづめ",
+    meaning:"馬や羊などの足のさきにある、かたい部分。",
+    hint:"動物の足の先をよく見てごらん。",
+    image:"images/test.png",
+    examples:["馬のひづめが地面をならした。","羊のひづめが見えた。","ひづめの音が聞こえた。"]
+  },
+  {
+    id:"nantoy",
+    word:"なんと〜",
+    reading:"なんと〜",
+    meaning:"おどろきや感動を表す言葉。",
+    hint:"思わず声が出るような気もち。",
+    image:"images/test.png",
+    examples:["なんと大きな本だろう。","なんと寒い日だ。","なんとすばらしい。"]
+  },
+  {
+    id:"hizatake",
+    word:"膝丈",
+    reading:"ひざたけ",
+    meaning:"ひざのあたりまでの長さ。",
+    hint:"服の長さを想像してみよう。",
+    image:"images/test.png",
+    examples:["膝丈のズボン。","スカートは膝丈だった。","膝丈まで雪が積もった。"]
+  },
+
+  {
+    id:"metta",
+    word:"めったに",
+    reading:"めったに",
+    meaning:"ほとんどしないこと。",
+    hint:"たまにしか起きない場面。",
+    image:"images/test.png",
+    examples:["めったに雨はふらない。","めったに会えない。","めったに起こらないこと。"]
+  },
+
+  {
+    id:"motenash",
+    word:"もてなす",
+    reading:"もてなす",
+    meaning:"お客さんに親切にすること。",
+    hint:"だいじに迎える様子。",
+    image:"images/test.png",
+    examples:["心をこめてもてなす。","客をもてなした。","食事でもてなす。"]
+  },
+
+  {
+    id:"uchitoke",
+    word:"うちとけた",
+    reading:"うちとけた",
+    meaning:"心をひらいて、安心している様子。",
+    hint:"緊張がとけた場面。",
+    image:"images/test.png",
+    examples:["すぐにうちとけた。","みんなとうちとけた。","うちとけた笑顔。"]
+  },
+
+  {
+    id:"susutta",
+    word:"すすった",
+    reading:"すすった",
+    meaning:"音を立てて吸ったこと。",
+    hint:"スープや鼻水の動き。",
+    image:"images/test.png",
+    examples:["スープをすすった。","鼻をすすった。","少し音を立ててすすった。"]
+  },
+
+  {
+    id:"kawa",
+    word:"革",
+    reading:"かわ",
+    meaning:"動物の皮を加工したもの。",
+    hint:"かばんやくつを思い出そう。",
+    image:"images/test.png",
+    examples:["革のかばん。","革の手袋。","丈夫な革。"]
+  },
+
+  {
+    id:"koboreta",
+    word:"こぼれた",
+    reading:"こぼれた",
+    meaning:"中にあったものが外に出た。",
+    hint:"器から落ちる様子。",
+    image:"images/test.png",
+    examples:["水がこぼれた。","スープがこぼれた。","思いがこぼれた。"]
+  },
+
+  {
+    id:"kinnonkatamari",
+    word:"金の塊",
+    reading:"きんのかたまり",
+    meaning:"金がかたまったもの。",
+    hint:"重くて光るもの。",
+    image:"images/test.png",
+    examples:["金の塊を見た。","金の塊のようだ。","宝物のような金の塊。"]
+  },
+
+  {
+    id:"omoide",
+    word:"思わず手をのばした",
+    reading:"おもわずてをのばした",
+    meaning:"考える前に、自然に手が動いた。",
+    hint:"反射的な動き。",
+    image:"images/test.png",
+    examples:["思わず手をのばした。","思わず手をのばしてしまった。","宝に思わず手をのばした。"]
+  }
+
+  // この下に続けて追加できます
+];
+
+const select = document.getElementById("wordSelect");
+const card = document.getElementById("card");
+
+words.forEach((w,i)=>{
+  const opt=document.createElement("option");
+  opt.value=i;
+  opt.text=w.word;
+  select.appendChild(opt);
+});
+
+select.onchange = ()=>{
+  const w = words[select.value];
+  card.innerHTML = `
+    <h2>${w.word}</h2>
+    <p>【やさしい意味】${w.meaning}</p>
+    <p>【絵のヒント】${w.hint}</p>
+    <img src="${w.image}">
+    <p class="example">例文：</p>
+    ${w.examples.map(e=>`<div class="example">・${e}</div>`).join("")}
+  `;
+};
+
+select.onchange();
+
+function checkSentence(){
+  const t=document.getElementById("inputText").value;
+  const fb=document.getElementById("feedback");
+  if(t.trim().length===0){
+    fb.textContent="文を書いてみよう。";
+  }else{
+    fb.textContent="文を書けています。いいですね。";
+  }
+}
+</script>
+
 </body>
 </html>
