@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>ことばカード＋文チェック（ブックウーマン語彙パック２）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+                   "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif;
+      background: #f4f5fb;
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.2rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+      margin-bottom: 16px;
+    }
+    .word-select-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    select {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+      min-width: 220px;
+    }
+    .word-main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .word-text {
+      flex: 1 1 260px;
+    }
+    .word-kanji {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    .word-reading {
+      font-size: 0.95rem;
+      color: #444;
+      margin-top: 2px;
+    }
+    .word-english {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e0e7ff;
+      color: #1e3a8a;
+      margin-top: 6px;
+    }
+    .word-image {
+      flex: 0 0 200px;
+      max-width: 220px;
+    }
+    .word-image img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      object-fit: cover;
+      max-height: 160px;
+    }
+    .image-hint {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 4px;
+    }
+    .section-title {
+      font-weight: 600;
+      margin-top: 0.6rem;
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+    .easy-meaning {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    ul.examples {
+      padding-left: 1.2rem;
+      margin: 0.2rem 0 0;
+      font-size: 0.95rem;
+    }
+    ul.examples li {
+      margin-bottom: 2px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 70px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .button-row {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #4f46e5;
+      color: #fff;
+      box-shadow: 0 3px 7px rgba(79, 70, 229, 0.35);
+      transition: transform 0.05s ease, box-shadow 0.05s ease, opacity 0.15s;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 12px rgba(79, 70, 229, 0.45);
+      opacity: 0.95;
+    }
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
+    }
+    .feedback {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .feedback-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 2px;
+    }
+    .feedback-ok {
+      color: #15803d;
+    }
+    .feedback-warn {
+      color: #b45309;
+    }
+    .feedback-tip {
+      color: #334155;
+    }
+    .small-note {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    @media (max-width: 640px) {
+      .word-main { flex-direction: column; }
+      .word-image { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>ことばカード＋文チェック（ブックウーマン語彙２）</h1>
+  <div class="subtitle">
+    上のリストから<strong>ことば</strong>をえらぶと、<br>
+    <strong>漢字・よみ・英語・絵のヒント・やさしい意味・例文３つ</strong>が表示されます。<br>
+    下の入力欄に児童が文を書き、「チェックする」でかんたんな確認ができます。
+  </div>
+
+  <div class="card">
+    <div class="word-select-row">
+      <label for="wordSelect">ことばをえらぶ：</label>
+      <select id="wordSelect"></select>
+    </div>
+  </div>
+
+  <div class="card" id="wordCard" style="display:none;">
+    <div class="word-main">
+      <div class="word-text">
+        <div class="word-kanji" id="kanji"></div>
+        <div class="word-reading" id="reading"></div>
+        <div class="word-english" id="english"></div>
+        <span class="badge" id="badgeTarget"></span>
+
+        <div class="section-title">やさしい意味</div>
+        <div class="easy-meaning" id="easyMeaning"></div>
+
+        <div class="section-title">例文（３つ）</div>
+        <ul class="examples" id="examples"></ul>
+      </div>
+
+      <div class="word-image">
+        <img id="image" src="" alt="ことばのイメージ画像" />
+        <div class="image-hint" id="imageHint"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="practiceCard" style="display:none;">
+    <h2>文づくり・チェック</h2>
+    <div class="small-note">
+      えらんだことばをつかって、文を１つ書いてください。<br>
+      （まだむずかしい子は、キーワードだけでもOK）
+    </div>
+    <textarea id="sentenceInput"
+      placeholder="ここに文を書いてね。"></textarea>
+    <div class="button-row">
+      <button id="checkButton">チェックする</button>
+      <button id="clearButton" type="button">けす</button>
+    </div>
+    <div class="feedback" id="feedback" style="display:none;">
+      <div class="feedback-label">フィードバック</div>
+      <div id="feedbackContent"></div>
+    </div>
+    <div class="small-note">
+      ※ 今は<strong>かんたんなチェックのみ</strong>です。<br>
+      本格的な文法チェックは、下の場所にAI（OpenAI など）の処理をつなぐことで実現できます。
+    </div>
+  </div>
+</div>
+
+<script>
+  // ★ 今回の38語だけ入れた語彙データ
+  const WORDS = [
+    {
+      id: "hizume",
+      kanji: "ひづめ",
+      reading: "ひづめ",
+      english: "hoof",
+      easyMeaning: "牛や馬・羊などの足の先の、かたいところ。",
+      imageHintText: "草原で、羊や馬の足元にひづめが見えているようす。",
+      imageFile: "images/hizume.png",
+      examples: [
+        "羊のひづめの音が、土の道にひびきます。",
+        "タカの見ている下では、ひづめの足音がします。",
+        "羊のひづめには、土が少しついていました。"
+      ]
+    },
+    {
+      id: "nanto",
+      kanji: "なんと〜",
+      reading: "なんと",
+      english: "what; how (surprise)",
+      easyMeaning: "とてもおどろいた時に、「わあ！」という気持ちをあらわすことば。",
+      imageHintText: "めをまるくして、本や景色を見て『なんと…』と思っている子ども。",
+      imageFile: "images/nanto.png",
+      examples: [
+        "なんと山の上にも本があったのです。",
+        "なんと羊があんなにたくさんいたなんて。",
+        "なんとおどろくべきことだ、とぼくは思いました。"
+      ]
+    },
+    {
+      id: "hizadake",
+      kanji: "膝丈",
+      reading: "ひざたけ",
+      english: "knee-length",
+      easyMeaning: "ひざの高さぐらいまでの長さ。",
+      imageHintText: "子どもが、ひざまでの長さのズボンをはいているようす。",
+      imageFile: "images/hizadake.png",
+      examples: [
+        "ぼくは膝丈のズボンをはいていました。",
+        "膝丈の草むらをかき分けて歩きます。",
+        "膝丈ぐらいの雪の中を進みました。"
+      ]
+    },
+    {
+      id: "mettani",
+      kanji: "めったに",
+      reading: "めったに",
+      english: "rarely; hardly ever",
+      easyMeaning: "ほとんど〜しない、たまにしかない。",
+      imageHintText: "本棚の前で、『こんな本はめったにない』と思っているようす。",
+      imageFile: "images/mettani.png",
+      examples: [
+        "ここでは本を読む人はめったにいません。",
+        "タカの巣を見られることはめったにありません。",
+        "羊が迷子になることはめったにありません。"
+      ]
+    },
+    {
+      id: "motenasu",
+      kanji: "もてなす",
+      reading: "もてなす",
+      english: "to treat; to entertain (a guest)",
+      easyMeaning: "来てくれた人に、食べ物やあたたかい言葉で親切にすること。",
+      imageHintText: "家の中で、お客さんにお茶やお菓子を出しているようす。",
+      imageFile: "images/motenasu.png",
+      examples: [
+        "ぼくの家は、山の人をよくもてなします。",
+        "母は遠くから来た人をていねいにもてなしました。",
+        "本の配達に来た人を、村の人たちは温かくもてなしました。"
+      ]
+    },
+    {
+      id: "uchitoketa",
+      kanji: "打ち解けた",
+      reading: "うちとけた",
+      english: "to open up; to become friendly",
+      easyMeaning: "はじめはきんちょうしていた人どうしが、なかよく話せるようになったようす。",
+      imageHintText: "少しはずかしそうだった二人が、笑いながら話しているようす。",
+      imageFile: "images/uchitoketa.png",
+      examples: [
+        "はじめはきんちょうしていたが、すぐに打ち解けたようすになりました。",
+        "本の話をしているうちに、ぼくたちは打ち解けた友だちになりました。",
+        "羊小屋で話しているうちに、家族とも打ち解けた気持ちになりました。"
+      ]
+    },
+    {
+      id: "susutta",
+      kanji: "すすった",
+      reading: "すすった",
+      english: "sipped; slurped",
+      easyMeaning: "すこしずつ、音を立てて飲んだり食べたりすること。",
+      imageHintText: "スープやお茶を、音をたてないようにそっとすすっているようす。",
+      imageFile: "images/susutta.png",
+      examples: [
+        "ぼくはあたたかいスープをそっとすすった。",
+        "お茶をすすったあと、体がぽかぽかしてきました。",
+        "みんなで、囲炉裏の前でスープをすすりました。"
+      ]
+    },
+    {
+      id: "kawa",
+      kanji: "革",
+      reading: "かわ",
+      english: "leather",
+      easyMeaning: "動物の皮をなめして作った、かたい材料。",
+      imageHintText: "茶色い革のバッグやベルトがならんでいるようす。",
+      imageFile: "images/kawa.png",
+      examples: [
+        "母は古い革のバッグを大切に使っています。",
+        "革の表紙の古びた本が棚にならんでいます。",
+        "その椅子は、革でおおわれていました。"
+      ]
+    },
+    {
+      id: "koboreta",
+      kanji: "こぼれた",
+      reading: "こぼれた",
+      english: "spilled; overflowed",
+      easyMeaning: "中に入っていたものが、外に出てしまったようす。",
+      imageHintText: "コップから少し水がこぼれて、テーブルに広がっているようす。",
+      imageFile: "images/koboreta.png",
+      examples: [
+        "カップからスープが少しこぼれました。",
+        "袋からいちごがこぼれたように見えました。",
+        "本棚から本がこぼれたように、たくさん積まれていました。"
+      ]
+    },
+    {
+      id: "kinnokatamari",
+      kanji: "金の塊",
+      reading: "きんのかたまり",
+      english: "a lump of gold",
+      easyMeaning: "かたまりになった金。とても高くて大事なもの。",
+      imageHintText: "手のひらにのる、小さく光る金色のかたまり。",
+      imageFile: "images/kinnokatamari.png",
+      examples: [
+        "それはまるで金の塊のように見えました。",
+        "金の塊があれば、なんでも買えると思いました。",
+        "ぼくには、本こそ金の塊より大事に思えました。"
+      ]
+    },
+    {
+      id: "omowazuteawonobashita",
+      kanji: "思わず手をのばした",
+      reading: "おもわずてをのばした",
+      english: "reached out without thinking",
+      easyMeaning: "気がつくと、つい手が出ていたようす。",
+      imageHintText: "きれいな本やいちごに、思わず手をのばしている子ども。",
+      imageFile: "images/omowazuteawonobashita.png",
+      examples: [
+        "ぼくは思わず手をのばしたくなる本を見つけました。",
+        "そのいちごを見て、思わず手をのばした。",
+        "思わず手をのばしたけれど、がまんして引っこめました。"
+      ]
+    },
+    {
+      id: "tsukamu",
+      kanji: "つかむ",
+      reading: "つかむ",
+      english: "to grab; to grasp",
+      easyMeaning: "手でしっかりとにぎること。",
+      imageHintText: "手のひらで本や小さな石をしっかりつかんでいるようす。",
+      imageFile: "images/tsukamu.png",
+      examples: [
+        "ぼくは本をしっかりつかみました。",
+        "羊のロープをつかんで、はなさないようにします。",
+        "チャンスをつかむように、本の世界を学びました。"
+      ]
+    },
+    {
+      id: "tsukamoutosuru",
+      kanji: "つかもうとする",
+      reading: "つかもうとする",
+      english: "to try to grab",
+      easyMeaning: "まだつかんでいないけれど、つかもうとして手をのばすようす。",
+      imageHintText: "ころがりそうな本やいちごを、あわててつかもうとしている手。",
+      imageFile: "images/tsukamoutosuru.png",
+      examples: [
+        "落ちそうな本を、ぼくはつかもうとしました。",
+        "いちごをつかもうとする手がふるえました。",
+        "金の塊をつかもうとするより、本を選びました。"
+      ]
+    },
+    {
+      id: "marukkiri",
+      kanji: "まるっきり",
+      reading: "まるっきり",
+      english: "completely; entirely",
+      easyMeaning: "ぜんぜん、すこしも〜ないと思う気持ち。",
+      imageHintText: "思っていたものと、まるっきりちがうものが出てきておどろいている顔。",
+      imageFile: "images/marukkiri.png",
+      examples: [
+        "それは、ぼくの想像とはまるっきりちがいました。",
+        "まるっきり知らない言葉ばかりの本でした。",
+        "羊の世話と本の世界は、まるっきりべつの世界のようです。"
+      ]
+    },
+    {
+      id: "shinjirarerukai",
+      kanji: "信じられるかい？",
+      reading: "しんじられるかい",
+      english: "can you believe it?",
+      easyMeaning: "『信じられないだろう？』という強いおどろきの言い方。",
+      imageHintText: "目をまるくして『えっ？』と言っている子ども。",
+      imageFile: "images/shinjirarerukai.png",
+      examples: [
+        "こんな山の上で本が読めるなんて、信じられるかい？",
+        "あの人が文字を読めるなんて、信じられるかい？",
+        "本といちごを物々交換するなんて、信じられるかい？"
+      ]
+    },
+    {
+      id: "nantedarou",
+      kanji: "なんて〜だろう",
+      reading: "なんて〜だろう",
+      english: "how ... it is",
+      easyMeaning: "『どれほど〜だろう』と、強く感じるときの言い方。",
+      imageHintText: "空や本を見上げて、『なんてすてきなんだろう』と思っているようす。",
+      imageFile: "images/nantedarou.png",
+      examples: [
+        "なんてすばらしい本なんだろう。",
+        "なんて静かな夜なんだろう、とぼくは思いました。",
+        "なんて勇ましい人なんだろう、と心が動きました。"
+      ]
+    },
+    {
+      id: "mudana",
+      kanji: "むだな",
+      reading: "むだな",
+      english: "wasteful; pointless",
+      easyMeaning: "なんの役にも立たないように見えること。",
+      imageHintText: "紙くずや使われていない道具が、むだに置かれているようす。",
+      imageFile: "images/mudana.png",
+      examples: [
+        "本を読まないのは、むだなことだと思いました。",
+        "むだな時間なんてない、とラークは言います。",
+        "いちごを捨ててしまうのは、むだなことです。"
+      ]
+    },
+    {
+      id: "nabe",
+      kanji: "なべ",
+      reading: "なべ",
+      english: "pot",
+      easyMeaning: "料理をつくるための深い金属のうつわ。",
+      imageHintText: "かまどの上にのっている丸いなべ。中から湯気が出ているようす。",
+      imageFile: "images/nabe.png",
+      examples: [
+        "なべでスープをあたためます。",
+        "母は大きななべを火にかけました。",
+        "なべの中から、よいにおいがこぼれてきました。"
+      ]
+    },
+    {
+      id: "shokki",
+      kanji: "食器",
+      reading: "しょっき",
+      english: "tableware; dishes",
+      easyMeaning: "ごはんを食べるときに使う皿やコップなど。",
+      imageHintText: "皿やコップ、スプーンがテーブルにきちんとならんでいるようす。",
+      imageFile: "images/shokki.png",
+      examples: [
+        "食器をならべて家族をまちます。",
+        "古い食器でも、大切に使えば気持ちがあたたかくなります。",
+        "ラークは本と同じくらい、食器も大切にしているようでした。"
+      ]
+    },
+    {
+      id: "dougu",
+      kanji: "道具",
+      reading: "どうぐ",
+      english: "tool; equipment",
+      easyMeaning: "仕事や作業をしやすくするもの。",
+      imageHintText: "くわやスコップ、本を運ぶためのかごなどがならんでいるようす。",
+      imageFile: "images/dougu.png",
+      examples: [
+        "畑の道具をなやにしまいます。",
+        "本もこころを耕す道具だと思いました。",
+        "道具をていねいに使うことは大切です。"
+      ]
+    },
+    {
+      id: "mashite",
+      kanji: "まして、",
+      reading: "まして",
+      english: "much more; let alone",
+      easyMeaning: "『もちろん〜、まして〜ならなおさらだ』というときに使うことば。",
+      imageHintText: "『これでも大変、ましてあれなら…』と考えているような表情。",
+      imageFile: "images/mashite.png",
+      examples: [
+        "本がなければさびしい。まして、読みかけの本をうばわれたらどうだろう。",
+        "ふつうの坂でも大変だ。まして雪の日なら危ない。",
+        "字が読めないのはつらい。まして、本が好きならなおさらです。"
+      ]
+    },
+    {
+      id: "kudaranai",
+      kanji: "くだらない",
+      reading: "くだらない",
+      english: "worthless; silly",
+      easyMeaning: "たいして意味がない、と感じるときの言葉。",
+      imageHintText: "つまらない話を聞いて、少しあきれている顔。",
+      imageFile: "images/kudaranai.png",
+      examples: [
+        "その話は、ぼくにはくだらないように思えました。",
+        "くだらないことでけんかをしてしまいました。",
+        "ラークにとっては、くだらない本など一冊もありません。"
+      ]
+    },
+    {
+      id: "furubitahon",
+      kanji: "古びた本",
+      reading: "ふるびたほん",
+      english: "worn, old book",
+      easyMeaning: "長いあいだ読まれて、表紙や紙がすこし傷んだ本。",
+      imageHintText: "表紙の角がすり切れた、色あせた本が机に置かれているようす。",
+      imageFile: "images/furubitahon.png",
+      examples: [
+        "古びた本の中に、大切な言葉がつまっていました。",
+        "棚には古びた本がぎっしり並んでいます。",
+        "古びた本は、だれかの手で何度も読まれたしるしです。"
+      ]
+    },
+    {
+      id: "ariwashinai",
+      kanji: "ありはしない",
+      reading: "ありはしない",
+      english: "there is absolutely no ...",
+      easyMeaning: "『ぜったいにない』と強く言う言い方。",
+      imageHintText: "空の箱を見せながら、『中には何もありはしない』と言っているようす。",
+      imageFile: "images/ariwashinai.png",
+      examples: [
+        "そんな都合のいい話がありはしない。",
+        "本の価値をお金ではかるなんてことは、ありはしない。",
+        "この山に図書館なんてありはしない、と思っていました。"
+      ]
+    },
+    {
+      id: "sorenanoni",
+      kanji: "それなのに",
+      reading: "それなのに",
+      english: "and yet; even so",
+      easyMeaning: "『そうなのに、ちがうことが起きた』とつなぐことば。",
+      imageHintText: "雨なのに外で走り回っている子どもを見て、『それなのに…』と思っているようす。",
+      imageFile: "images/sorenanoni.png",
+      examples: [
+        "本は重い。それなのに、ぼくは何冊もかついでいきました。",
+        "みんなは文字が読めない。それなのに、本を求めてやって来ます。",
+        "疲れている。それなのに、心はうきうきしていました。"
+      ]
+    },
+    {
+      id: "chirattomiru",
+      kanji: "ちらっと見る",
+      reading: "ちらっとみる",
+      english: "to glance at",
+      easyMeaning: "すぐに目をそらして、少しだけ見ること。",
+      imageHintText: "本や人の顔を、こわごわとちらっと見ているようす。",
+      imageFile: "images/chirattomiru.png",
+      examples: [
+        "ぼくは古びた本をちらっと見ました。",
+        "羊小屋の中をちらっと見ると、妹がいました。",
+        "ラークはぼくをちらっと見て、にやっと笑いました。"
+      ]
+    },
+    {
+      id: "butsubutsukoukan",
+      kanji: "物々交換",
+      reading: "ぶつぶつこうかん",
+      english: "barter; trade goods for goods",
+      easyMeaning: "お金を使わず、おたがいに物と物を取りかえること。",
+      imageHintText: "本といちごや卵などを、おたがいに手わたししているようす。",
+      imageFile: "images/butsubutsukoukan.png",
+      examples: [
+        "ぼくは本を、いちごと物々交換しました。",
+        "村では、食べ物を物々交換することがあります。",
+        "お金がなくても、物々交換ならほしい物が手に入ります。"
+      ]
+    },
+    {
+      id: "nigirikobushi",
+      kanji: "にぎりこぶし",
+      reading: "にぎりこぶし",
+      english: "clenched fist",
+      easyMeaning: "手をぎゅっとにぎった形。",
+      imageHintText: "小さな手が、ぎゅっとにぎりこぶしになっているようす。",
+      imageFile: "images/nigirikobushi.png",
+      examples: [
+        "ぼくはにぎりこぶしを作って、がまんしました。",
+        "にぎりこぶしほどの金の塊がありました。",
+        "妹は、にぎりこぶしで目をこすりました。"
+      ]
+    },
+    {
+      id: "kuchiwohasamu",
+      kanji: "口をはさむ",
+      reading: "くちをはさむ",
+      english: "to interrupt; to butt in",
+      easyMeaning: "人が話しているところに、よこから急に話しかけること。",
+      imageHintText: "二人が話しているところに、もう一人が口をはさもうとしているようす。",
+      imageFile: "images/kuchiwohasamu.png",
+      examples: [
+        "大人たちの話に口をはさむわけにはいきません。",
+        "ぼくは言いかけて、口をはさむのをやめました。",
+        "ラークはときどき、きっぱりと口をはさみます。"
+      ]
+    },
+    {
+      id: "nanka",
+      kanji: "〜なんか",
+      reading: "〜なんか",
+      english: "such a thing as ~ (often downplaying)",
+      easyMeaning: "そのことを少しひく目に言うときに使うことば。",
+      imageHintText: "『本のためなんかじゃない』と心の中でつぶやいているようす。",
+      imageFile: "images/nanka.png",
+      examples: [
+        "本のためなんかじゃない、とぼくは言いました。",
+        "金のためなんかじゃなく、人のために働きたい。",
+        "有名になることなんか、どうでもいいと思いました。"
+      ]
+    },
+    {
+      id: "ichigowotsumu",
+      kanji: "いちごをつむ",
+      reading: "いちごをつむ",
+      english: "to pick strawberries",
+      easyMeaning: "畑や山で、いちごを手でとりあつめること。",
+      imageHintText: "赤いいちごを、かごに入れながらつんでいるようす。",
+      imageFile: "images/ichigowotsumu.png",
+      examples: [
+        "妹はいちごをつむのがだい好きです。",
+        "いちごをつんで、本と物々交換しました。",
+        "朝早くから、いちごをつむ仕事を手伝いました。"
+      ]
+    },
+    {
+      id: "kipparito",
+      kanji: "きっぱりと",
+      reading: "きっぱりと",
+      english: "firmly; decisively",
+      easyMeaning: "はっきりと、迷わずに言ったり行動したりするようす。",
+      imageHintText: "迷わず『いいえ』と言っている子どもの表情。",
+      imageFile: "images/kipparito.png",
+      examples: [
+        "ラークはきっぱりと言いました。",
+        "ぼくはきっぱりとことわる勇気がありませんでした。",
+        "きっぱりと本を選んだ妹の目は、まっすぐでした。"
+      ]
+    },
+    {
+      id: "arittake",
+      kanji: "ありったけ",
+      reading: "ありったけ",
+      english: "all (that one has)",
+      easyMeaning: "その人が持っているものを、全部。",
+      imageHintText: "小さな手で、ありったけのいちごをだいているようす。",
+      imageFile: "images/arittake.png",
+      examples: [
+        "ぼくはありったけの本を持って山をのぼりました。",
+        "ありったけのいちごをかごにつめました。",
+        "ありったけの勇気を出して、声をかけました。"
+      ]
+    },
+    {
+      id: "kuukimitaini",
+      kanji: "空気みたいに",
+      reading: "くうきみたいに",
+      english: "like air",
+      easyMeaning: "そこにあるのに気づかれないくらい、あたり前なようす。",
+      imageHintText: "そこにいるのに、だれにも気づかれていない子ども。",
+      imageFile: "images/kuukimitaini.png",
+      examples: [
+        "ぼくは空気みたいに、その場に立っていました。",
+        "本は、空気みたいに生活の中にありました。",
+        "妹は空気みたいに静かに本を読んでいます。"
+      ]
+    },
+    {
+      id: "tatoeshitatte",
+      kanji: "たとえ〜したって",
+      reading: "たとえ〜したって",
+      english: "even if ...",
+      easyMeaning: "『もし〜しても、それでも』という気持ちをあらわす言い方。",
+      imageHintText: "雨がふっていても、『たとえ雨がふったって行く』と考えているようす。",
+      imageFile: "images/tatoeshitatte.png",
+      examples: [
+        "たとえ笑われたって、本をとどけたいと思いました。",
+        "たとえ一人で山道を行ったって、ぼくはかまわない。",
+        "たとえ本が古びていたって、中身は変わりません。"
+      ]
+    },
+    {
+      id: "kamawanai",
+      kanji: "かまわない",
+      reading: "かまわない",
+      english: "it doesn’t matter; it’s okay",
+      easyMeaning: "そうなってもいい、気にしないという気持ち。",
+      imageHintText: "少しぬれても『かまわないよ』と言っている子ども。",
+      imageFile: "images/kamawanai.png",
+      examples: [
+        "服がよごれても、ぼくはかまわない。",
+        "本さえ守れれば、足がぬれてもかまわない。",
+        "たとえ遠回りになっても、かまわないと思いました。"
+      ]
+    },
+    {
+      id: "kiri",
+      kanji: "霧",
+      reading: "きり",
+      english: "fog; mist",
+      easyMeaning: "空気の中に水のつぶがいっぱいで、先がよく見えなくなるようす。",
+      imageHintText: "山道に白い霧がたちこめて、少し先がかすんでいるようす。",
+      imageFile: "images/kiri.png",
+      examples: [
+        "山には朝早く霧が出ます。",
+        "霧の中では、道がよく見えません。",
+        "霧の向こうから、タカの声が聞こえるようでした。"
+      ]
+    },
+    {
+      id: "isamashii",
+      kanji: "勇ましい",
+      reading: "いさましい",
+      english: "brave; gallant",
+      easyMeaning: "こわがらずに、強く行動するようす。",
+      imageHintText: "本をかかえて、山道をまっすぐ歩いていく子どもの姿。",
+      imageFile: "images/isamashii.png",
+      examples: [
+        "本をとどけに行くぼくの姿は、少し勇ましいと言えるかもしれません。",
+        "勇ましいタカが、空を大きく回っています。",
+        "妹の目は、小さくても勇ましい光を持っていました。"
+      ]
+    }
+  ];
+
+  // ==== 以下、共通ロジック（前のページと同じ） ====
+
+  const wordSelect = document.getElementById("wordSelect");
+  const wordCard = document.getElementById("wordCard");
+  const practiceCard = document.getElementById("practiceCard");
+
+  const kanjiEl = document.getElementById("kanji");
+  const readingEl = document.getElementById("reading");
+  const englishEl = document.getElementById("english");
+  const easyMeaningEl = document.getElementById("easyMeaning");
+  const examplesEl = document.getElementById("examples");
+  const imageEl = document.getElementById("image");
+  const imageHintEl = document.getElementById("imageHint");
+  const badgeTargetEl = document.getElementById("badgeTarget");
+
+  const sentenceInput = document.getElementById("sentenceInput");
+  const checkButton = document.getElementById("checkButton");
+  const clearButton = document.getElementById("clearButton");
+  const feedback = document.getElementById("feedback");
+  const feedbackContent = document.getElementById("feedbackContent");
+
+  function initSelect() {
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "ことばをえらんでください";
+    wordSelect.appendChild(defaultOption);
+
+    WORDS.forEach(word => {
+      const opt = document.createElement("option");
+      opt.value = word.id;
+      opt.textContent = `${word.kanji}（${word.reading}）`;
+      wordSelect.appendChild(opt);
+    });
+  }
+
+  function renderWord(wordId) {
+    const word = WORDS.find(w => w.id === wordId);
+    if (!word) {
+      wordCard.style.display = "none";
+      practiceCard.style.display = "none";
+      return;
+    }
+
+    wordCard.style.display = "block";
+    practiceCard.style.display = "block";
+
+    kanjiEl.textContent = word.kanji;
+    readingEl.textContent = `読み：${word.reading}`;
+    englishEl.textContent = `英語：${word.english}`;
+    badgeTargetEl.textContent = `ターゲット語：${word.kanji}`;
+
+    easyMeaningEl.textContent = word.easyMeaning;
+    imageEl.src = word.imageFile;
+    imageEl.alt = `${word.kanji} のイメージ画像`;
+    imageHintEl.textContent = "絵のヒント：" + word.imageHintText;
+
+    examplesEl.innerHTML = "";
+    word.examples.forEach(ex => {
+      const li = document.createElement("li");
+      li.textContent = ex;
+      examplesEl.appendChild(li);
+    });
+
+    sentenceInput.value = "";
+    feedback.style.display = "none";
+    feedbackContent.innerHTML = "";
+  }
+
+  function checkSentence() {
+    const selectedId = wordSelect.value;
+    const word = WORDS.find(w => w.id === selectedId);
+    if (!word) return;
+
+    let text = sentenceInput.value.trim();
+    if (!text) {
+      feedback.style.display = "block";
+      feedbackContent.innerHTML =
+        `<span class="feedback-warn">文が入力されていません。</span>\n` +
+        `<span class="feedback-tip">えらんだことば（${word.kanji}）をつかって、１文書いてみましょう。</span>`;
+      return;
+    }
+
+    const hasTargetWord =
+      text.includes(word.kanji) || text.includes(word.reading);
+
+    if (!/[。.!?！？]$/.test(text)) {
+      text = text + "。";
+    }
+
+    let messages = [];
+
+    if (!hasTargetWord) {
+      messages.push(
+        `<span class="feedback-warn">文の中に「${word.kanji}」が見つかりませんでした。</span>`
+      );
+      messages.push(
+        `<span class="feedback-tip">できれば「${word.kanji}」か「${word.reading}」を入れて文を作ってみましょう。</span>`
+      );
+    } else {
+      messages.push(
+        `<span class="feedback-ok">いいですね！「${word.kanji}」をつかった文になっています。</span>`
+      );
+    }
+
+    if (text.length > 40) {
+      messages.push(
+        `<span class="feedback-tip">文が少し長いので、２つの文に分けても読みやすくなります。</span>`
+      );
+    }
+
+    messages.push(
+      `<span class="feedback-label" style="display:block;margin-top:4px;">チェック後の文（おすすめ表記）：</span>` +
+      `<span class="feedback-tip">${text}</span>`
+    );
+
+    feedbackContent.innerHTML = messages.join("\n");
+    feedback.style.display = "block";
+  }
+
+  function clearSentence() {
+    sentenceInput.value = "";
+    feedback.style.display = "none";
+    feedbackContent.innerHTML = "";
+  }
+
+  wordSelect.addEventListener("change", (e) => {
+    renderWord(e.target.value);
+  });
+  checkButton.addEventListener("click", checkSentence);
+  clearButton.addEventListener("click", clearSentence);
+
+  initSelect();
+</script>
+</body>
+</html>
